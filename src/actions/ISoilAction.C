@@ -55,7 +55,6 @@ validParams<ISoilAction>()
                                      "the parameters are defined for "
                                      "each soil layer.");
   params.addParam<Real>("a0",
-                        1.0,
                         "The first coefficient for pressure dependent yield strength "
                         "calculation for all the soil layers. If a0 = 1, a1 = 0 and "
                         "a2=0 for one soil layer, then the yield strength of that "
@@ -239,6 +238,8 @@ ISoilAction::act()
         getParam<std::vector<Real>>("hardening_ratio");
   }
   _problem->addMaterial("ComputeISoilStress", "stress_" + block[0], params);
+
+// std::cout << block[0] << std::endl;
 
   // strain calculation
   std::vector<VariableName> displacements = getParam<std::vector<VariableName>>("displacements");

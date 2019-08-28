@@ -52,12 +52,12 @@ validParams<ComputeISoilStress>()
                                      "The reference pressure at which "
                                      "the parameters are defined for "
                                      "each soil layer.");
-  params.addParam<Real>("a0",
-                        1.0,
-                        "The first coefficient for pressure dependent yield strength "
-                        "calculation for all the soil layers. If a0 = 1, a1 = 0 and "
-                        "a2=0 for one soil layer, then the yield strength of that "
-                        "layer is independent of pressure.");
+                                    params.addParam<Real>("a0",
+                                                           "The first coefficient for pressure dependent yield strength "
+                                                           "calculation for all the soil layers. If a0 = 1, a1 = 0 and "
+                                                           "a2=0 for one soil layer, then the yield strength of that "
+                                                           "layer is independent of pressure.");
+  params.declareControllable("a0");
   params.addParam<Real>("a1",
                         0.0,
                         "The second coefficient for pressure dependent yield "
