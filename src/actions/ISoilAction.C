@@ -115,6 +115,7 @@ validParams<ISoilAction>()
   // params required for soil_type = 'darendeli' and 'GQ/H'
   params.addRequiredParam<std::vector<Real>>("initial_shear_modulus",
                                              "The initial shear modulus of the soil layers.");
+  params.declareControllable("initial_shear_modulus");
   params.addParam<unsigned int>("number_of_points",
                                 "The total number of data points in which the "
                                 "backbone curve needs to be split for all soil "
@@ -169,6 +170,7 @@ validParams<ISoilAction>()
       "density",
       "Vector of density values that map one-to-one with the number "
       "'layer_ids' parameter.");
+  params.declareControllable("density");
   params.addParam<bool>("use_automatic_differentiation",
                         false,
                         "Flag to use automatic differentiation (AD) objects when possible");

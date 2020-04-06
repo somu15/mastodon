@@ -42,6 +42,7 @@ validParams<ComputeIsotropicElasticityTensorSoil>()
       "density",
       "Vector of density values that map one-to-one with the number "
       "'layer_ids' parameter.");
+  params.declareControllable("density");
   params.addParam<bool>(
       "wave_speed_calculation", true, "Set to False to turn off P and S wave speed calculation.");
   // Controlled scale parameters (temporary; TODO: remove when #107 is resolved.)

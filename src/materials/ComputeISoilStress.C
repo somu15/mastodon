@@ -114,6 +114,7 @@ validParams<ComputeISoilStress>()
   // params required for soil_type = 'darendeli', 'GQ/H' and 'thin_layer'
   params.addRequiredParam<std::vector<Real>>("initial_shear_modulus",
                                              "The initial shear modulus of the soil layers. ");
+  params.declareControllable("initial_shear_modulus");
   params.addParam<MaterialPropertyName>("shear_modulus",
                                         "Name of Material Property  or a constant real number "
                                         "defining the shear modulus of the materials.");

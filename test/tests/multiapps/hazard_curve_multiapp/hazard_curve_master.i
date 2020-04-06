@@ -11,7 +11,7 @@
 [UserObjects]
   [./motions]
     type = GroundMotionReader
-    pattern = '../../data/ground_motion_*.csv'
+    pattern = '../../data/Ormsby_*.csv'
   [../]
   [./hazard]
     type = HazardCurve
