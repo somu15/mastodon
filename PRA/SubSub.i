@@ -179,7 +179,7 @@
 [Functions]
   [./accel_bottom]
     type = PiecewiseLinear
-    data_file = 'gm_data/Ormsby_0.csv'
+    data_file = 'Ormsby.csv'
     format = columns
     scale_factor = 1.0
     xy_in_file_only = false

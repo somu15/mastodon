@@ -1,0 +1,10 @@
+[Tests]
+  issues = '#6881'
+  design = 'FluidFreeSurfaceBC.md'
+  [./test]
+    type = 'Exodiff'
+    input = 'fluid_free_surface_bc.i'
+    exodiff = 'fluid_free_surface_bc_out.e'
+    requirement = 'MOOSE shall provide fluid free surface boundary condition.'
+  [../]
+[]
