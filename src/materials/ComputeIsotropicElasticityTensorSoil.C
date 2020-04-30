@@ -36,13 +36,16 @@ ComputeIsotropicElasticityTensorSoilTempl<is_ad>::validParams()
   params.addParam<std::vector<Real>>("shear_modulus",
                                      "Vector of shear modulus values that map one-to-one "
                                      "with the number 'layer_ids' parameter.");
+  // params.declareControllable("shear_modulus");
   params.addParam<std::vector<Real>>("elastic_modulus",
                                      "Vector of elastic modulus values that map one-to-one "
                                      "with the number 'layer_ids' parameter.");
+  // params.declareControllable("elastic_modulus");
   params.addRequiredParam<std::vector<Real>>(
       "density",
       "Vector of density values that map one-to-one with the number "
       "'layer_ids' parameter.");
+  // params.declareControllable("density");
   params.addParam<bool>(
       "wave_speed_calculation", true, "Set to False to turn off P and S wave speed calculation.");
   // Controlled scale parameters (temporary; TODO: remove when #107 is resolved.)
