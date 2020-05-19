@@ -14,12 +14,12 @@
 /**
  * DG kernel for interfacing diffusion between two variables on adjacent blocks
  */
-class FluidStructureInterface : public InterfaceKernel
+class FSIStressMatch : public InterfaceKernel
 {
 public:
   static InputParameters validParams();
 
-  FluidStructureInterface(const InputParameters & parameters);
+  FSIStressMatch(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual(Moose::DGResidualType type) override;

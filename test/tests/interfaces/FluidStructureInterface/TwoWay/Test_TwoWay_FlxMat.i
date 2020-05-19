@@ -2,15 +2,15 @@
   [gen]
     type = GeneratedMeshGenerator
     dim = 1
-    nx = 100
-    xmax = 2
+    nx = 2000
+    xmax = 2000
   []
   [./subdomain1]
     input = gen
     type = SubdomainBoundingBoxGenerator
-    bottom_left = '1.0 0 0'
+    bottom_left = '1000.0 0 0'
     block_id = 1
-    top_right = '2.0 0.0 0'
+    top_right = '2000.0 0.0 0'
   [../]
   [./interface]
     type = SideSetsBetweenSubdomainsGenerator
@@ -54,10 +54,26 @@
       family = MONOMIAL
       block = 1
   [../]
-  [./flux_u]
+  [./acc1]
       order = FIRST
       family = MONOMIAL
       block = 0
+  [../]
+  [./vel_x]
+    block = 0
+  [../]
+  [./accel_x]
+    block = 0
+  [../]
+  [./stress_xx]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
+  [../]
+  [./strain_xx]
+    order = CONSTANT
+    family = MONOMIAL
+    block = 0
   [../]
 []
 
@@ -95,10 +111,10 @@
   [./inertia_x1]
     type = InertialForce
     variable = disp_x
-    # velocity = vel_x
-    # acceleration = accel_x
-    # beta = 0.25
-    # gamma = 0.5
+    velocity = vel_x
+    acceleration = accel_x
+    beta = 0.25
+    gamma = 0.5
     block = '0'
   [../]
 []
@@ -119,23 +135,57 @@
     pressure = 'p'
     fluiddens = 1.0
   [../]
-  [./grad_dispx]
+  [./acc]
     block = 0
     type = StructureFluxAuxKernel
-    variable = 'flux_u'
-    dispx = 'disp_x'
+    variable = 'acc1'
+    dispx = disp_x
+    # pressure = 'disp_x'
     fluiddens = 1000.0
+  [../]
+  [./accel_x]
+    type = NewmarkAccelAux
+    variable = accel_x
+    displacement = disp_x
+    velocity = vel_x
+    beta = 0.25
+    execute_on = 'timestep_end'
+    block = '0'
+  [../]
+  [./vel_x]
+    type = NewmarkVelAux
+    variable = vel_x
+    acceleration = accel_x
+    gamma = 0.5
+    execute_on = 'timestep_end'
+    block = '0'
+  [../]
+  [./stress_xx]
+    type = RankTwoAux
+    rank_two_tensor = stress
+    variable = stress_xx
+    index_i = 0
+    index_j = 0
+    block = '0'
+  [../]
+  [./strain_xx]
+    type = RankTwoAux
+    rank_two_tensor = total_strain
+    variable = strain_xx
+    index_i = 0
+    index_j = 0
+    block = '0'
   [../]
 []
 
 [InterfaceKernels]
   [./interface]
-    type = FluidStructureInterface # FluidStructureInterface
+    type = FSIntFlxMat # FluidStructureInterface
     variable = disp_x
     neighbor_var = 'p'
     boundary = 'master0_interface'
     D = 1000.0
-    # D_neighbor = D
+    D_neighbor = 1.0
   [../]
 []
 
@@ -143,7 +193,7 @@
   [./bottom_accel]
     type = FunctionDirichletBC
     variable = p
-    boundary = 'right'
+    boundary = 'master0_interface' #'right'
     function = accel_bottom
   [../]
   [./disp_x]
@@ -152,6 +202,12 @@
     variable = disp_x
     value = 0.0
   [../]
+  # [./p_x]
+  #   type = PresetBC
+  #   boundary = 'right'
+  #   variable = p
+  #   value = 0.0
+  # [../]
   # [./bottom_accel]
   #   type = FunctionDirichletBC
   #   variable = disp_x
@@ -169,8 +225,8 @@
 [Functions]
   [./accel_bottom]
     type = PiecewiseLinear
-    data_file = Input.csv
-    scale_factor = 1000.0
+    data_file = Input_5Sines.csv
+    scale_factor = 1.0
     format = 'columns'
   [../]
   # [./accel_bottom]
@@ -185,30 +241,39 @@
   [./density]
     type = GenericConstantMaterial
     prop_names = density
-    prop_values =  4.44e-7
+    prop_values = 1e-6 # 4.44e-7
     block = '1'
   [../]
   [./density0]
     type = GenericConstantMaterial
     block = '0'
     prop_names = density
-    prop_values =  8050 # 2700
+    prop_values = 1000 # 2070 8050
   [../]
   [./elasticity_base]
     type = ComputeIsotropicElasticityTensor
-    youngs_modulus = 2e11 # 1e14
-    poissons_ratio = 0.3
+    youngs_modulus = 1000 #2e11 5500
+    poissons_ratio = 0.0
     block = '0'
   [../]
-  [./stress_beam2]
-    type = ComputeFiniteStrainElasticStress
-    block = '0'
-  [../]
-  [./strain_15]
-    type = ComputeFiniteStrain
+  [./strain]
+    type = ComputeFiniteStrain #ComputeIncrementalSmallStrain
     block = '0'
     displacements = 'disp_x'
   [../]
+  [./stress]
+    type =  ComputeFiniteStrainElasticStress # ComputeLinearElasticStress
+    block = '0'
+  [../]
+  # [./stress_beam2]
+  #   type = ComputeFiniteStrainElasticStress
+  #   block = '0'
+  # [../]
+  # [./strain_15]
+  #   type = ComputeFiniteStrain
+  #   block = '0'
+  #   displacements = 'disp_x'
+  # [../]
 []
 
 [Preconditioning]
@@ -221,16 +286,18 @@
 [Executioner]
   type = Transient
   solve_type = 'NEWTON'
-  petsc_options = '-snes_ksp_ew'
-  petsc_options_iname = '-ksp_gmres_restart -pc_type -pc_hypre_type -pc_hypre_boomeramg_max_iter'
-  petsc_options_value = '201                hypre    boomeramg      4'
-  start_time = 0.0
+  # petsc_options = '-snes_ksp_ew'
+  # petsc_options_iname = '-ksp_gmres_restart -pc_type -pc_hypre_type -pc_hypre_boomeramg_max_iter'
+  # petsc_options_value = '201                hypre    boomeramg      4'
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
+  petsc_options_value = 'lu       superlu_dist'
+  start_time = -0.01
   end_time = 0.4
   dt = 0.001
   dtmin = 0.0001
-  nl_abs_tol = 1e-4 # 1e-3
-  nl_rel_tol = 1e-4 # 1e-3
-  l_tol = 1e-4 # 1e-3
+  nl_abs_tol = 1e-3 # 1e-3
+  nl_rel_tol = 1e-3 # 1e-3
+  l_tol = 1e-3 # 1e-3
   l_max_its = 25
   timestep_tolerance = 1e-8
   # automatic_scaling = true
@@ -259,21 +326,46 @@
   #   point = '1.0 0.0 0.0'
   #   variable = p
   # [../]
-  # [./u1]
+  # [./a1]
+  #   type = PointValue
+  #   point = '1000.0 0.0 0.0'
+  #   variable = accel_x
+  # [../]
+  [./a1]
+    type = PointValue
+    point = '1000.0 0.0 0.0'
+    variable = acc1
+  [../]
+  # [./v1]
   #   type = PointValue
   #   point = '1.0 0.0 0.0'
-  #   variable = disp_x
+  #   variable = vel_x
+  # [../]
+  # [./grad_u]
+  #   type = PointValue
+  #   point = '1.0 0.0 0.0'
+  #   variable = flux_u
+  # [../]
+  # [./u2]
+  #   type = PointValue
+  #   point = '1.0 0.0 0.0'
+  #   variable = stress_xx
+  # [../]
+  # [./p1]
+  #   type = PointValue
+  #   point = '1.01 0.0 0.0'
+  #   variable = p
   # [../]
   [./p_flux]
     type = PointValue
-    point = '1.0 0.0 0.0'
+    point = '1000.0 0.0 0.0'
     variable = flux_p
   [../]
-  [./u_flux]
-    type = PointValue
-    point = '1.0 0.0 0.0'
-    variable = flux_u
-  [../]
+  # [./u_flux]
+  #   type = PointValue
+  #   point = '1.0 0.0 0.0'
+  #   variable = flux_u
+  # [../]
 []
 
 [Outputs]
@@ -281,10 +373,10 @@
   exodus = true
   perf_graph = true
   print_linear_residuals = true
-  file_base = Exodus_Test_FSI_1
+  file_base = Exodus_Test_1_FlxMat
   [./out]
     execute_on = 'TIMESTEP_BEGIN'
     type = CSV
-    file_base = Test_FSI_1
+    file_base = Test_1_FlxMat
   [../]
 []

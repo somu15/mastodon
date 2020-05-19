@@ -2,7 +2,7 @@
   [gen]
     type = GeneratedMeshGenerator
     dim = 1
-    nx = 100
+    nx = 1000
     xmax = 2
   []
   [./subdomain1]
@@ -48,6 +48,14 @@
   [../]
 []
 
+# [Modules/TensorMechanics/Master]
+#   [./block1]
+#     strain = SMALL #Small linearized strain, automatically set to XY coordinates
+#     add_variables = true #Add the variables from the displacement string in GlobalParams
+#     block = 0
+#   [../]
+# []
+
 [AuxVariables]
   [./flux_p]
       order = FIRST
@@ -59,6 +67,7 @@
       family = MONOMIAL
       block = 0
   [../]
+
 []
 
 # [AuxVariables]
@@ -92,15 +101,15 @@
     displacements = 'disp_x'
     block = '0'
   [../]
-  [./inertia_x1]
-    type = InertialForce
-    variable = disp_x
-    # velocity = vel_x
-    # acceleration = accel_x
-    # beta = 0.25
-    # gamma = 0.5
-    block = '0'
-  [../]
+  # [./inertia_x1]
+  #   type = InertialForce
+  #   variable = disp_x
+  #   # velocity = vel_x
+  #   # acceleration = accel_x
+  #   # beta = 0.25
+  #   # gamma = 0.5
+  #   block = '0'
+  # [../]
 []
 
 [AuxKernels]
@@ -124,7 +133,7 @@
     type = StructureFluxAuxKernel
     variable = 'flux_u'
     dispx = 'disp_x'
-    fluiddens = 1000.0
+    fluiddens = 0.0
   [../]
 []
 
@@ -134,8 +143,8 @@
     variable = disp_x
     neighbor_var = 'p'
     boundary = 'master0_interface'
-    D = 1000.0
-    # D_neighbor = D
+    D = 0.0
+    D_neighbor = 1.0
   [../]
 []
 
@@ -185,30 +194,39 @@
   [./density]
     type = GenericConstantMaterial
     prop_names = density
-    prop_values =  4.44e-7
+    prop_values = 4.44e-7 # 4.44e-7
     block = '1'
   [../]
-  [./density0]
-    type = GenericConstantMaterial
-    block = '0'
-    prop_names = density
-    prop_values =  8050 # 2700
-  [../]
+  # [./density0]
+  #   type = GenericConstantMaterial
+  #   block = '0'
+  #   prop_names = density
+  #   prop_values =  8050 # 2700
+  # [../]
   [./elasticity_base]
     type = ComputeIsotropicElasticityTensor
     youngs_modulus = 2e11 # 1e14
-    poissons_ratio = 0.3
+    poissons_ratio = 0.0
     block = '0'
   [../]
-  [./stress_beam2]
-    type = ComputeFiniteStrainElasticStress
-    block = '0'
-  [../]
-  [./strain_15]
-    type = ComputeFiniteStrain
+  [./strain]
+    type = ComputeSmallStrain
     block = '0'
     displacements = 'disp_x'
   [../]
+  [./stress]
+    type = ComputeLinearElasticStress
+    block = '0'
+  [../]
+  # [./stress_beam2]
+  #   type = ComputeFiniteStrainElasticStress
+  #   block = '0'
+  # [../]
+  # [./strain_15]
+  #   type = ComputeFiniteStrain
+  #   block = '0'
+  #   displacements = 'disp_x'
+  # [../]
 []
 
 [Preconditioning]
@@ -221,12 +239,14 @@
 [Executioner]
   type = Transient
   solve_type = 'NEWTON'
-  petsc_options = '-snes_ksp_ew'
-  petsc_options_iname = '-ksp_gmres_restart -pc_type -pc_hypre_type -pc_hypre_boomeramg_max_iter'
-  petsc_options_value = '201                hypre    boomeramg      4'
+  # petsc_options = '-snes_ksp_ew'
+  # petsc_options_iname = '-ksp_gmres_restart -pc_type -pc_hypre_type -pc_hypre_boomeramg_max_iter'
+  # petsc_options_value = '201                hypre    boomeramg      4'
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
+  petsc_options_value = 'lu       superlu_dist'
   start_time = 0.0
   end_time = 0.4
-  dt = 0.001
+  dt = 0.00001
   dtmin = 0.0001
   nl_abs_tol = 1e-4 # 1e-3
   nl_rel_tol = 1e-4 # 1e-3
@@ -259,21 +279,21 @@
   #   point = '1.0 0.0 0.0'
   #   variable = p
   # [../]
-  # [./u1]
+  [./u1]
+    type = PointValue
+    point = '1.0 0.0 0.0'
+    variable = disp_x
+  [../]
+  # [./p_flux]
   #   type = PointValue
   #   point = '1.0 0.0 0.0'
-  #   variable = disp_x
+  #   variable = flux_p
   # [../]
-  [./p_flux]
-    type = PointValue
-    point = '1.0 0.0 0.0'
-    variable = flux_p
-  [../]
-  [./u_flux]
-    type = PointValue
-    point = '1.0 0.0 0.0'
-    variable = flux_u
-  [../]
+  # [./u_flux]
+  #   type = PointValue
+  #   point = '1.0 0.0 0.0'
+  #   variable = flux_u
+  # [../]
 []
 
 [Outputs]
@@ -281,10 +301,10 @@
   exodus = true
   perf_graph = true
   print_linear_residuals = true
-  file_base = Exodus_Test_FSI_1
+  file_base = Exodus_Test_1
   [./out]
     execute_on = 'TIMESTEP_BEGIN'
     type = CSV
-    file_base = Test_FSI_1
+    file_base = Test_1
   [../]
 []

@@ -14,12 +14,13 @@
 /**
  * DG kernel for interfacing diffusion between two variables on adjacent blocks
  */
-class FluidStructureInterface : public InterfaceKernel
+
+class FSIntFlxMat : public InterfaceKernel
 {
 public:
   static InputParameters validParams();
 
-  FluidStructureInterface(const InputParameters & parameters);
+  FSIntFlxMat(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual(Moose::DGResidualType type) override;
@@ -29,8 +30,5 @@ protected:
   const MaterialProperty<Real> & _D_neighbor;
   const VariableValue & _u_dotdot;
   const VariableValue & _du_dotdot_du;
-
-  // const VariableGradient & _grad_press;
-
   // const MaterialProperty<Real> & _D_neighbor;
 };

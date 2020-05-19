@@ -7,13 +7,13 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "FluidStructureInterface.h"
+#include "FSIStressMatch.h"
 #include <iostream>
 
-registerMooseObject("MastodonApp", FluidStructureInterface);
+registerMooseObject("MastodonApp", FSIStressMatch);
 
 InputParameters
-FluidStructureInterface::validParams()
+FSIStressMatch::validParams()
 {
   InputParameters params = InterfaceKernel::validParams();
   params.addParam<MaterialPropertyName>("D", "D", "The density.");
@@ -21,7 +21,7 @@ FluidStructureInterface::validParams()
   return params;
 }
 
-FluidStructureInterface::FluidStructureInterface(const InputParameters & parameters)
+FSIStressMatch::FSIStressMatch(const InputParameters & parameters)
   : InterfaceKernel(parameters),
     _D(getMaterialProperty<Real>("D")),
     _D_neighbor(getNeighborMaterialProperty<Real>("D_neighbor")),
@@ -32,17 +32,17 @@ FluidStructureInterface::FluidStructureInterface(const InputParameters & paramet
 }
 
 Real
-FluidStructureInterface::computeQpResidual(Moose::DGResidualType type)
+FSIStressMatch::computeQpResidual(Moose::DGResidualType type)
 {
   Real r = 0;
   switch (type)
   {
     case Moose::Element:
-      r = _test[_i][_qp] * _D_neighbor[_qp] * _neighbor_value[_qp];// Element is structure (interchanging enforces flux match) _test[_i][_qp] * _D_neighbor[_qp] * _grad_neighbor_value[_qp] * _normals[_qp]
+      r = _test[_i][_qp] * _D_neighbor[_qp] * _grad_neighbor_value[_qp] * _normals[_qp];// Element is structure (interchanging enforces flux match) _test[_i][_qp] * _D_neighbor[_qp] * _grad_neighbor_value[_qp] * _normals[_qp]
       break;
 
   case Moose::Neighbor:
-      r = _test_neighbor[_i][_qp] * -_D[_qp] * _u_dotdot[_qp]; // Neighbor is fluid (interchanging enforces flux match) _u_dotdot[_qp]
+      r = _test_neighbor[_i][_qp] * -_D[_qp] * _grad_u[_qp] * _normals[_qp]; // Neighbor is fluid (interchanging enforces flux match) _u_dotdot[_qp]
       break;
   }
 
@@ -50,7 +50,7 @@ FluidStructureInterface::computeQpResidual(Moose::DGResidualType type)
 }
 
 Real
-FluidStructureInterface::computeQpJacobian(Moose::DGJacobianType type)
+FSIStressMatch::computeQpJacobian(Moose::DGJacobianType type)
 {
   Real jac = 0;
 
@@ -61,11 +61,11 @@ FluidStructureInterface::computeQpJacobian(Moose::DGJacobianType type)
       break;
 
     case Moose::NeighborElement:
-      jac = _test_neighbor[_i][_qp] * -_D[_qp] * _du_dotdot_du[_qp]; // _du_dotdot_du[_qp]
+      jac = _test_neighbor[_i][_qp] * -_D[_qp] * _grad_phi[_j][_qp] * _normals[_qp]; // _du_dotdot_du[_qp]
       break;
 
     case Moose::ElementNeighbor:
-      jac = _test[_i][_qp] * _D_neighbor[_qp] * _phi_neighbor[_j][_qp];//_phi_neighbor[_j][_qp]; // _test[_i][_qp] * _D_neighbor[_qp] * _grad_phi_neighbor[_j][_qp] * _normals[_qp]
+      jac = _test[_i][_qp] * _D_neighbor[_qp] * _grad_phi_neighbor[_j][_qp] * _normals[_qp];//_phi_neighbor[_j][_qp]; // _test[_i][_qp] * _D_neighbor[_qp] * _grad_phi_neighbor[_j][_qp] * _normals[_qp]
       break;
 
   }
