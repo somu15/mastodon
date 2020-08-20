@@ -1,0 +1,9 @@
+[Tests]
+  [./ex11a]
+    type = RunApp
+    input = FSI_ex11a.i
+    method = opt
+    check_input = True
+    verification = 'fsi_vnv.md'
+  [../]
+[../]

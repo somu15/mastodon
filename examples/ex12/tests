@@ -1,0 +1,9 @@
+[Tests]
+  [./ex12]
+    type = RunApp
+    input = FSI_ex12.i
+    method = opt
+    check_input = True
+    verification = 'doc/content/sqa/v_and_v/fsi/fsi_vnv.md'
+  [../]
+[../]
