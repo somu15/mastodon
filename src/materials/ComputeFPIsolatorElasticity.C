@@ -51,7 +51,7 @@ ComputeFPIsolatorElasticity::validParams()
       "beta", "beta>0.0", "Beta parameter of Newmark algorithm.");
   params.addRequiredRangeCheckedParam<unsigned int>(
       "unit",
-      "8 > unit > 0",
+      "10 > unit > 0",
       "Tag for conversion in the pressure factor computation "
       "when different unit systems are used. Enter "
       "1 for N m s C;  "
@@ -61,7 +61,8 @@ ComputeFPIsolatorElasticity::validParams()
       "5 for lb in s C;  "
       "6 for kip in s C;  "
       "7 for lb ft s C;  "
-      "8 for kip ft s C. ");
+      "8 for kip ft s C. "
+      "9 for GN m s C. ");
   params.addParam<Real>(
       "k_x",
       10e13,
@@ -265,6 +266,10 @@ ComputeFPIsolatorElasticity::computeShear()
   if (_unit == 8)
   {
     p_Unit_Convert = 0.04788;
+  }
+  if (_unit == 9)
+  {
+    p_Unit_Convert = 1000.0; // Giga Newton
   }
 
   // Calculate normal force

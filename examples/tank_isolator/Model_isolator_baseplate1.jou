@@ -1,0 +1,128 @@
+reset
+create cylinder radius 0.7979 height 2.0
+volume 1 move z 1.0
+create cylinder radius 0.79 height 2.1
+volume 2 move z 1.0579
+subtract volume 2 from volume 1
+create cylinder radius 0.79 height 1.8
+volume 3 move z 0.9079
+merge all
+webcut volume 1  with sheet extended from surface 7
+webcut volume 1  with sheet extended from surface 8
+webcut volume 5  with sheet extended from surface 12
+merge all
+merge surface 26 with surface 10 force
+merge surface 14 with surface 17 force
+create Cylinder height 0.1 radius 0.79
+volume 7 move z -0.05
+merge surface 15 with surface 30 force
+
+create vertex 0.0 0.0 -0.1 on surface 29
+create vertex 0.75 0.0 -0.1 on surface 29
+create vertex 0.0 0.75 -0.1 on surface 29
+create vertex -0.75 0.0 -0.1 on surface 29
+create vertex 0.0 -0.75 -0.1 on surface 29
+create vertex 0.53033008588991 0.53033008588991 -0.1 on surface 29
+create vertex -0.53033008588991 0.53033008588991 -0.1 on surface 29
+create vertex -0.53033008588991 -0.53033008588991 -0.1 on surface 29
+create vertex 0.53033008588991 -0.53033008588991 -0.1 on surface 29
+create vertex 0.69290964938347 0.28701257427382 -0.1 on surface 29
+create vertex -0.28701257427382 0.69290964938347 -0.1 on surface 29
+create vertex -0.69290964938347 -0.28701257427382 -0.1 on surface 29
+create vertex 0.28701257427382 -0.69290964938347 -0.1 on surface 29
+create vertex 0.375 0.0 -0.1 on surface 29
+create vertex 0.0 0.375 -0.1 on surface 29
+create vertex -0.375 0.0 -0.1 on surface 29
+create vertex 0.0 -0.375 -0.1 on surface 29
+create vertex 0.26516504294496 0.26516504294496 -0.1 on surface 29
+create vertex -0.26516504294496 0.26516504294496 -0.1 on surface 29
+create vertex -0.26516504294496 -0.26516504294496 -0.1 on surface 29
+create vertex 0.26516504294496 -0.26516504294496 -0.1 on surface 29
+
+imprint volume 7 with vertex 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41
+delete vertex 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41
+
+create vertex 0.0 0.0 -0.13
+create vertex 0.75 0.0 -0.13
+create vertex 0.0 0.75 -0.13
+create vertex -0.75 0.0 -0.13
+create vertex 0.0 -0.75 -0.13
+create vertex 0.53033008588991 0.53033008588991 -0.13
+create vertex -0.53033008588991 0.53033008588991 -0.13
+create vertex -0.53033008588991 -0.53033008588991 -0.13
+create vertex 0.53033008588991 -0.53033008588991 -0.13
+create vertex 0.69290964938347 0.28701257427382 -0.13
+create vertex -0.28701257427382 0.69290964938347 -0.13
+create vertex -0.69290964938347 -0.28701257427382 -0.13
+create vertex 0.28701257427382 -0.69290964938347 -0.13
+create vertex 0.375 0.0 -0.13
+create vertex 0.0 0.375 -0.13
+create vertex -0.375 0.0 -0.13
+create vertex 0.0 -0.375 -0.13
+create vertex 0.26516504294496 0.26516504294496 -0.13
+create vertex -0.26516504294496 0.26516504294496 -0.13
+create vertex -0.26516504294496 -0.26516504294496 -0.13
+create vertex 0.26516504294496 -0.26516504294496 -0.13
+
+create curve vertex 70 55
+create curve vertex 74 51
+create curve vertex 66 59
+create curve vertex 69 56
+create curve vertex 73 52
+create curve vertex 65 60
+create curve vertex 68 57
+create curve vertex 72 53
+create curve vertex 64 61
+create curve vertex 71 54
+create curve vertex 75 50
+create curve vertex 67 58
+create curve vertex 82 43
+create curve vertex 78 47
+create curve vertex 81 44
+create curve vertex 77 48
+create curve vertex 80 45
+create curve vertex 76 49
+create curve vertex 83 42
+create curve vertex 79 46
+create curve vertex 63 62
+
+merge all
+
+surface 29 size 0.1
+mesh surface 29
+volume 7 int 2
+mesh volume 7
+
+surface 9 scheme hole rad_intervals 2
+surface 9 size 0.1
+mesh surface 9
+
+volume 5 int 3
+mesh volume 5
+
+volume 6 int 18
+mesh volume 6
+mesh volume 1
+
+mesh volume 4
+
+volume 3 int 18
+mesh volume 3
+
+curve 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 interval 1
+curve 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 scheme equal
+mesh curve 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62
+
+block 1 add volume 6 4 1 5
+block 2 add volume 3
+block 3 add curve 45 42 53 60 57 49 40 58 51 43 44 59 50 52 56 48 54 41 55 47 46
+block 4 add volume 7
+
+nodeset 5 add vertex 70 74 66 69 73 65 68 72 64 71 75 67 82 78 81 77 80 76 83 79 63
+nodeset 5 name "Bottom"
+
+sideset 4 add surface 12
+sideset 4 name "Fluid_top"
+
+nodeset 6 add vertex 55 51 59 56 52 60 57 53 61 54 50 58 43 47 44 48 45 49 42 46 62
+nodeset 6 name "Top"

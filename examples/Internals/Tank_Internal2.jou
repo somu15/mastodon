@@ -1,0 +1,76 @@
+reset
+create cylinder radius 6.1 height 15.2
+volume 1 move z 7.6
+create cylinder radius 6.08 height 15.16
+volume 2 move z 7.6
+subtract volume 2 from volume 1
+create cylinder radius 2.9 height 13.7
+volume 4 move z 8.35
+create cylinder radius 2.88 height 13.66
+volume 5 move z 8.35
+subtract volume 5 from volume 4
+subtract volume 6 from volume 3 keep
+delete volume 3
+webcut volume 6  with sheet extended from surface 22
+create cylinder radius 6.08 height 12.0
+volume 9 move z 6.02
+webcut volume 7 8 with sheet extended from surface 31
+create cylinder radius 2.9 height 10.5
+volume 12 move z 6.77
+subtract volume 12 from volume 9
+create cylinder radius 2.88 height 10.5
+volume 13 move z 6.77
+webcut volume 11 with sheet extended from surface 51
+delete volume 11
+webcut volume 9 10 with sheet extended from surface 43
+merge surface 29 with surface 36 force
+merge surface 50 with surface 43 force
+merge surface 47 with surface 55 force
+merge surface 51 with surface 60 force
+webcut volume 7 with sheet extended from surface 22
+merge all
+merge surface 59 with surface 56 force
+webcut volume 6 with sheet extended from surface 40
+merge surface 73 with surface 27 force
+merge surface 71 with surface 74 force
+webcut volume 10 with sheet extended from surface 29
+imprint volume 10 19
+merge volume 10 19
+merge surface 80 with surface 29 force
+merge surface 35 with surface 32 force
+webcut volume 10 with sheet extended from surface 58
+merge surface 82 with surface 84 force
+merge surface 80 with surface 29 force
+
+volume 6 size 0.92
+mesh volume 6
+mesh volume 7
+mesh volume 17
+mesh volume 20
+mesh volume 8
+mesh volume 18
+mesh volume 14
+mesh volume 9
+mesh volume 13
+mesh volume 15
+mesh volume 16
+mesh volume 19
+mesh volume 10
+
+block 1 add volume 6 7 8 10 14 16 17 18 19 20
+block 2 add volume 9 13 15
+
+sideset 1 add surface 25 75 72
+sideset 1 name "Top"
+
+sideset 2 add surface 29 58 wrt volume 9
+sideset 2 name "Interface1"
+
+sideset 3 add surface 43 wrt volume 13
+sideset 3 name "Interface2"
+
+sideset 4 add surface 61 wrt volume 15
+sideset 4 name "Interface3"
+
+sideset 5 add surface 49 52
+sideset 5 name "Fluid_top"

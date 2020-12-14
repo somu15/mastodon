@@ -1,0 +1,15 @@
+reset
+brick x 5 y 5 z 5
+
+block 1 add volume 1
+block 1 element type HEX8
+
+volume 1 interval 10
+mesh volume 1
+
+sideset 1 add surface 2
+sideset 1 name "Bottom"
+sideset 2 add surface 3 4 5 6
+sideset 2 name "Sides"
+nodeset 4 add surface 1
+nodeset 4 name "Nodes"

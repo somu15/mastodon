@@ -1,0 +1,36 @@
+reset
+brick x 5 y 1 z 1
+create surface rectangle width 1 height 1 xplane
+volume 2 move x 2.5
+brick x 5 y 1 z 1
+volume 3 move x 5
+merge all
+block 1 add volume 1
+block 2 add surface 6
+block 3 add volume 3
+block 1 element type HEX8
+block 2 element type SHELL4
+block 3 element type HEX8
+
+curve 2 8 4 6 interval 10
+curve 6 8 2 4 scheme equal
+mesh curve 6 8 2 4
+surface 4 interval 3
+mesh surface 4
+mesh volume 1
+surface 7 interval 3
+mesh surface 7
+curve 24 22 18 20 interval 10
+curve 24 22 18 20 scheme equal
+surface 13 interval 3
+mesh surface 13
+mesh volume 3
+
+sideset 1 add surface 6 wrt volume 1
+sideset 1 name "Interface"
+sideset 2 add surface 4
+sideset 2 name "Left"
+sideset 3 add surface 13
+sideset 3 name "Right"
+sideset 4 add surface 12 8 10 9
+sideset 4 name "Solid_surface"

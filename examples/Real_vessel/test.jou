@@ -1,0 +1,27 @@
+reset
+
+create sphere radius 3.625 inner radius 3.6125 znegative
+create sphere radius 3.6125 znegative
+webcut volume 1 with general plane zplane offset -2.625
+webcut volume 2 with general plane zplane offset -2.625
+delete volume 1 2
+
+create cylinder height 4 radius 0.5
+volume 10 move z -3
+
+webcut volume 3 with sheet extended from surface 16
+webcut volume 4 with sheet extended from surface 16
+delete volume 5
+
+webcut volume 4 with plane xplane
+webcut volume 3 with plane xplane
+merge all
+
+imprint volume all
+
+mesh volume 6
+mesh volume 7
+mesh volume 3
+mesh volume 9
+mesh volume 4
+mesh volume 8

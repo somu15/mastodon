@@ -303,23 +303,35 @@
     value = 0.0
   [../]
   [./accel_x0]
-    type = PresetAcceleration
-    boundary = 'left'
-    function = acceleration_x
+    type = DirichletBC
     variable = disp_x
-    beta = 0.25
-    acceleration = 'accel_x'
-    velocity = 'vel_x'
+    boundary = left
+    value = 0.0
   [../]
   [./accel_y0]
-    type = PresetAcceleration
-    boundary = 'left'
-    function = acceleration_y
+    type = DirichletBC
     variable = disp_y
-    beta = 0.25
-    acceleration = 'accel_y'
-    velocity = 'vel_y'
+    boundary = left
+    value = 0.0
   [../]
+  # [./accel_x0]
+  #   type = PresetAcceleration
+  #   boundary = 'left'
+  #   function = acceleration_x
+  #   variable = disp_x
+  #   beta = 0.25
+  #   acceleration = 'accel_x'
+  #   velocity = 'vel_x'
+  # [../]
+  # [./accel_y0]
+  #   type = PresetAcceleration
+  #   boundary = 'left'
+  #   function = acceleration_y
+  #   variable = disp_y
+  #   beta = 0.25
+  #   acceleration = 'accel_y'
+  #   velocity = 'vel_y'
+  # [../]
   [./accel_z0]
     type = PresetAcceleration
     boundary = 'left'
@@ -377,19 +389,19 @@
 []
 
 [Functions]
-  [./acceleration_x]
-    type = PiecewiseLinear
-    data_file = accel_x.csv
-    format=columns
-  [../]
-  [./acceleration_y]
-    type = PiecewiseLinear
-    data_file = accel_y.csv
-    format=columns
-  [../]
+  # [./acceleration_x]
+  #   type = PiecewiseLinear
+  #   data_file = accel_x.csv
+  #   format=columns
+  # [../]
+  # [./acceleration_y]
+  #   type = PiecewiseLinear
+  #   data_file = accel_y.csv
+  #   format=columns
+  # [../]
   [./acceleration_z]
     type = PiecewiseLinear
-    data_file = accel_z.csv
+    data_file = ElCentro.csv
     format=columns
   [../]
   [./force_x]
@@ -413,7 +425,7 @@
   nl_rel_tol = 1e-8
   nl_abs_tol = 1e-8
   start_time = 0
-  end_time =0.15
+  end_time =7.0
   dt = 0.001
   dtmin = 0.0000001
   timestep_tolerance = 1e-8
@@ -450,86 +462,86 @@
 []
 
 [Postprocessors]
-  [./disp_x0]
-    type = NodalVariableValue
-    nodeid = 0
-    variable = disp_x
-  [../]
-  [./vel_x0]
-    type = NodalVariableValue
-    nodeid = 0
-    variable = vel_x
-  [../]
-  [./accel_x0]
-    type = NodalVariableValue
-    nodeid = 0
-    variable = accel_x
-  [../]
-  [./disp_x1]
-    type = NodalVariableValue
-    nodeid = 1
-    variable = disp_x
-  [../]
-  [./vel_x1]
-    type = NodalVariableValue
-    nodeid = 1
-    variable = vel_x
-  [../]
-  [./accel_x1]
-    type = NodalVariableValue
-    nodeid = 1
-    variable = accel_x
-  [../]
-  [./reaction_x]
-    type = NodalSum
-    variable = reaction_x
-    boundary = left
-  [../]
-  [./disp_y0]
-    type = NodalVariableValue
-    nodeid = 0
-    variable = disp_y
-  [../]
-  [./vel_y0]
-    type = NodalVariableValue
-    nodeid = 0
-    variable = vel_y
-  [../]
-  [./accel_y0]
-    type = NodalVariableValue
-    nodeid = 0
-    variable = accel_y
-  [../]
-  [./disp_y1]
-    type = NodalVariableValue
-    nodeid = 1
-    variable = disp_y
-  [../]
-  [./vel_y1]
-    type = NodalVariableValue
-    nodeid = 1
-    variable = vel_y
-  [../]
-  [./accel_y1]
-    type = NodalVariableValue
-    nodeid = 1
-    variable = accel_y
-  [../]
-  [./reaction_y]
-    type = NodalSum
-    variable = reaction_y
-    boundary = left
-  [../]
+  # [./disp_x0]
+  #   type = NodalVariableValue
+  #   nodeid = 0
+  #   variable = disp_x
+  # [../]
+  # [./vel_x0]
+  #   type = NodalVariableValue
+  #   nodeid = 0
+  #   variable = vel_x
+  # [../]
+  # [./accel_x0]
+  #   type = NodalVariableValue
+  #   nodeid = 0
+  #   variable = accel_x
+  # [../]
+  # [./disp_x1]
+  #   type = NodalVariableValue
+  #   nodeid = 1
+  #   variable = disp_x
+  # [../]
+  # [./vel_x1]
+  #   type = NodalVariableValue
+  #   nodeid = 1
+  #   variable = vel_x
+  # [../]
+  # [./accel_x1]
+  #   type = NodalVariableValue
+  #   nodeid = 1
+  #   variable = accel_x
+  # [../]
+  # [./reaction_x]
+  #   type = NodalSum
+  #   variable = reaction_x
+  #   boundary = left
+  # [../]
+  # [./disp_y0]
+  #   type = NodalVariableValue
+  #   nodeid = 0
+  #   variable = disp_y
+  # [../]
+  # [./vel_y0]
+  #   type = NodalVariableValue
+  #   nodeid = 0
+  #   variable = vel_y
+  # [../]
+  # [./accel_y0]
+  #   type = NodalVariableValue
+  #   nodeid = 0
+  #   variable = accel_y
+  # [../]
+  # [./disp_y1]
+  #   type = NodalVariableValue
+  #   nodeid = 1
+  #   variable = disp_y
+  # [../]
+  # [./vel_y1]
+  #   type = NodalVariableValue
+  #   nodeid = 1
+  #   variable = vel_y
+  # [../]
+  # [./accel_y1]
+  #   type = NodalVariableValue
+  #   nodeid = 1
+  #   variable = accel_y
+  # [../]
+  # [./reaction_y]
+  #   type = NodalSum
+  #   variable = reaction_y
+  #   boundary = left
+  # [../]
   [./disp_z0]
     type = NodalVariableValue
     nodeid = 0
     variable = disp_z
   [../]
-  [./vel_z0]
-    type = NodalVariableValue
-    nodeid = 0
-    variable = vel_z
-  [../]
+  # [./vel_z0]
+  #   type = NodalVariableValue
+  #   nodeid = 0
+  #   variable = vel_z
+  # [../]
   [./accel_z0]
     type = NodalVariableValue
     nodeid = 0
@@ -540,21 +552,21 @@
     nodeid = 1
     variable = disp_z
   [../]
-  [./vel_z1]
-    type = NodalVariableValue
-    nodeid = 1
-    variable = vel_z
-  [../]
+  # [./vel_z1]
+  #   type = NodalVariableValue
+  #   nodeid = 1
+  #   variable = vel_z
+  # [../]
   [./accel_z1]
     type = NodalVariableValue
     nodeid = 1
     variable = accel_z
   [../]
-  [./reaction_z]
-    type = NodalSum
-    variable = reaction_z
-    boundary = left
-  [../]
+  # [./reaction_z]
+  #   type = NodalSum
+  #   variable = reaction_z
+  #   boundary = left
+  # [../]
 []
 
 [Outputs]

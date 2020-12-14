@@ -399,6 +399,11 @@
     nodeid = 1
     variable = disp_y
   [../]
+  [./disp_y1]
+    type = NodalVariableValue
+    nodeid = 0
+    variable = disp_y
+  [../]
   [./reaction_y]
     type = NodalSum
     variable = 'reaction_y'

@@ -1,0 +1,26 @@
+reset
+create cylinder radius 0.79 height 0.2
+volume 1 move z 1.9
+create surface skin curve 2 1
+delete volume 1
+create cylinder radius 0.79 height 1.8
+volume 3 move z 0.9
+create surface skin curve 4 5
+create surface circle radius 0.79 zplane
+
+block 1 add surface 4 8 9
+block 2 add volume 3
+block 1 element type shell4
+block 2 element type hex8
+merge all
+sideset 1 add surface 7
+sideset 1 name "Fluid_top"
+sideset 2 add surface 5 wrt volume 3
+sideset 2 name "Interface1"
+sideset 3 add surface 6 wrt volume 3
+sideset 3 name "Interface2"
+mesh surface 4 5 6
+mesh volume 3
+merge all
+sideset 4 add curve 3
+sideset 4 name "Bottom"

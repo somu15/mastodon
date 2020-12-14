@@ -1,0 +1,32 @@
+reset
+brick x 5 y 1 z 1
+brick x 0.1 y 1 z 1
+volume 2 move x 2.55
+merge all
+
+block 1 add volume 1
+block 2 add volume 2
+
+curve 2 8 4 6 interval 10
+curve 6 8 2 4 scheme equal
+mesh curve 6 8 2 4
+surface 4 interval 3
+mesh surface 4
+mesh volume 1
+curve 14 16 18 20 interval 4
+curve 14 16 18 20 scheme equal
+mesh curve 14 16 18 20
+surface 12 interval 3
+mesh surface 12
+mesh volume 2
+
+sideset 1 add surface 6 wrt volume 2
+sideset 1 name "Interface"
+sideset 2 add surface 4
+sideset 2 name "Left"
+sideset 3 add surface 2 7 9 11
+sideset 3 name "ShellB"
+sideset 4 add surface 11
+sideset 4 name "YTop"
+sideset 5 add surface 12
+sideset 5 name "Right"

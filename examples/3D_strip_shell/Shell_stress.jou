@@ -1,0 +1,22 @@
+reset
+brick x 5 y 5 z 5
+create surface rectangle width 5 height 5 zplane
+volume 2 move z 2.5
+merge all
+
+block 1 add volume 1
+block 2 add surface 1
+block 1 element type HEX8
+block 2 element type SHELL4
+
+curve 6 5 8 7 interval 10
+curve 6 5 8 7 scheme equal
+mesh curve 6 5 8 7
+mesh surface 2
+mesh volume 1
+mesh surface 1
+
+sideset 1 add surface 2
+sideset 1 name "Bottom"
+nodeset 2 add surface 1
+nodeset 2 name "Nodes"

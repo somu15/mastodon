@@ -1,0 +1,11 @@
+reset
+create surface rectangle width 50 height 50 zplane
+curve 2 1 4 3 interval 50
+curve 2 1 4 3 scheme equal
+mesh surface 1
+
+block 1 add surface 1
+nodeset 1 add surface 1
+nodeset 1 name "Nodes"
+sideset 2 add curve 1 2 3 4
+sideset 2 name "Boundaries"

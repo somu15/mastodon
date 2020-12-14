@@ -1,0 +1,28 @@
+reset
+brick x 5 y 1 z 1
+brick x 5 y 1 z 1
+volume 2 move x 5
+merge all
+block 1 add volume 1
+block 2 add volume 2
+
+curve 2 8 4 6 interval 10
+curve 6 8 2 4 scheme equal
+mesh curve 6 8 2 4
+surface 4 interval 3
+mesh surface 4
+mesh volume 1
+surface 12 interval 3
+mesh surface 12
+curve 14 20 16 18 interval 10
+curve 14 20 16 18 scheme equal
+mesh volume 2
+
+sideset 1 add surface 6 wrt volume 2
+sideset 1 name "Interface"
+sideset 2 add surface 4
+sideset 2 name "Left"
+sideset 3 add surface 12
+sideset 3 name "Right"
+sideset 4 add surface 7 8 9 11
+sideset 4 name "Solid_surface"

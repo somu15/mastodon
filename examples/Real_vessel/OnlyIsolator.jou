@@ -1,0 +1,24 @@
+reset
+create vertex 0.467647 -3.402387 4.98125
+create vertex -0.467467 3.402387 4.98125
+create vertex -3.426369 0.23437 4.98125
+create vertex 3.426369 -0.23437 4.98125
+create vertex 0.467647 -3.402387 4.66125
+create vertex -0.467467 3.402387 4.66125
+create vertex -3.426369 0.23437 4.66125
+create vertex 3.426369 -0.23437 4.66125
+create curve vertex 5 1
+create curve vertex 7 3
+create curve vertex 6 2
+create curve vertex 8 4
+merge all
+
+curve 1 2 3 4 interval 1
+curve 1 2 3 4 scheme equal
+mesh curve 1 2 3 4
+
+nodeset 1 add vertex 8 6 7 5
+nodeset 1 name "IsoBottom"
+
+nodeset 2 add vertex 1 2 3 4
+nodeset 2 name "IsoTop"

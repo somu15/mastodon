@@ -59,13 +59,13 @@ The three-dimensional finite element mesh is generated using Cubit 15.5b. The fo
 
 ## Modeling using MOOSE modules
 
-The tank with water is modeled using the capabilities of the [modules/fluid_structure_interaction/index.md] and the [modules/tensor_mechanics/index.md]. In particular,
+The tank with water is modeled using the capabilities of the Fluid Structure Interaction module and the [modules/tensor_mechanics/index.md]. In particular,
 the tank is modeled using the following kernels in the [modules/tensor_mechanics/index.md]:
 
 - [`InertialForce`](InertialForce.md) kernel for the acceleration component
 - [`DynamicTensorMechanics`](DynamicTensorMechanicsAction.md) action for the stiffness component
 
-The fluid is modeled using the following kernels in the [modules/fluid_structure_interaction/index.md]:
+The fluid is modeled using the following kernels in the Fluid Structure Interaction module:
 
 - `AcousticInertia` kernel for the double time derivative of the fluid pressure
 - `Diffusion` kernel for the Laplacian of the fluid pressure

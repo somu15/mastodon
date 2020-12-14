@@ -14,7 +14,6 @@
       cutoff_frequency = 25
     [../]
   [../]
-
 []
 
 [Variables]

@@ -1,0 +1,12 @@
+[Tests]
+  design = "manuals/user/index.md"
+  issues = '#173'
+  [./test]
+    type = 'Exodiff'
+    input = 'Test_Diff.i'
+    exodiff = 'Test_Diff_out.e'
+    verification = 'fsi_vnv.md'
+
+    requirement = "MASTODON shall correctly analyze the simple diffusion problem."
+  [../]
+[]

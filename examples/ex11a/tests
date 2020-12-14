@@ -5,5 +5,8 @@
     method = opt
     check_input = True
     verification = 'fsi_vnv.md'
+    requirement = 'The Newmark time integration scheme in MASTODON shall calculate results that are equal to analytical calculations.'
+    # design = 'timeintegrators/NewmarkBeta.md'
+    issues = '#334'
   [../]
 [../]
