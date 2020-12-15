@@ -23,6 +23,10 @@ include $(FRAMEWORK_DIR)/moose.mk
 TENSOR_MECHANICS := yes
 CONTACT          := yes
 STOCHASTIC_TOOLS := yes
+FLUID_PROPERTIES := yes
+HEAT_CONDUCTION  := yes
+NAVIER_STOKES    := yes
+FSI              := yes
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 
