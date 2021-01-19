@@ -1,23 +1,30 @@
 
 [Mesh]
-  [mesh_gen]
-    type = GeneratedMeshGenerator
-    dim = 2
-    ny = 1 # 50
-    ymin = 0.0
-    ymax = 0.5
-    nx = 100 # 100
-    xmin = 0.0
-    xmax = 10.0
-    # elem_type = QUAD
-  []
-  [nodeset_gen]
-    type = ExtraNodesetGenerator
-    new_boundary = 'corner_node'
-    coord = '10.0 0.0 0.0'
-    input = 'mesh_gen'
-  [../]
-  displacements = 'disp_x disp_y'
+  # [mesh_gen]
+  #   type = GeneratedMeshGenerator
+  #   dim = 3
+  #   ny = 4 # 50
+  #   ymin = 0.0
+  #   ymax = 0.5
+  #   zmin = 0.0
+  #   zmax = 1.0
+  #   nz = 2
+  #   nx = 100 # 100
+  #   xmin = 0.0
+  #   xmax = 10.0
+  #   # elem_type = QUAD
+  # []
+  # [nodeset_gen]
+  #   type = ExtraNodesetGenerator
+  #   new_boundary = 'corner_node'
+  #   coord = '10.0 0.0 0.5'
+  #   input = 'mesh_gen'
+  # [../]
+  # [mesh_gen]
+  # [../]
+  type = FileMesh
+  file = Cantilever3DInc.e
+  displacements = 'disp_x disp_y disp_z'
   second_order = true
 []
 
@@ -27,6 +34,10 @@
     family = LAGRANGE
   [../]
   [./disp_y]
+    order = SECOND # FIRST
+    family = LAGRANGE
+  [../]
+  [./disp_z]
     order = SECOND # FIRST
     family = LAGRANGE
   [../]
@@ -53,7 +64,7 @@
 
 [Kernels]
   [./DynamicTensorMechanics]
-    displacements = 'disp_x disp_y'
+    displacements = 'disp_x disp_y disp_z'
   [../]
 []
 
@@ -92,13 +103,19 @@
   [./fixx1]
     type = DirichletBC
     variable = disp_x
-    boundary = left
+    boundary = Left
     value = 0.0
   [../]
   [./fixy1]
     type = DirichletBC
     variable = disp_y
-    boundary = left
+    boundary = Left
+    value = 0.0
+  [../]
+  [./fixz1]
+    type = DirichletBC
+    variable = disp_z
+    boundary = Left
     value = 0.0
   [../]
 []
@@ -107,8 +124,14 @@
   [./force_y2]
     type = ConstantRate
     variable = disp_y
-    boundary = corner_node
-    rate = 5.0e-4
+    boundary = Point
+    rate = 3.5355e-4 # 5.0e-4
+  [../]
+  [./force_x2]
+    type = ConstantRate
+    variable = disp_x
+    boundary = Point
+    rate = -3.5355e-4 # 5.0e-4
   [../]
 []
 
@@ -120,7 +143,7 @@
   [../]
   [./strain]
     type = ComputeFiniteStrain
-    displacements = 'disp_x disp_y'
+    displacements = 'disp_x disp_y disp_z'
   [../]
   [./stress]
     type =  ComputeFiniteStrainElasticStress
@@ -155,52 +178,57 @@
 []
 
 [Postprocessors]
-  [./disp_x1]
-    type = PointValue
-    point = '10.0 0.25 0.0'
-    variable = disp_x
-  [../]
-  [./disp_y1]
-    type = PointValue
-    point = '10.0 0.25 0.0'
-    variable = disp_y
-  [../]
+  # [./disp_x1]
+  #   type = PointValue
+  #   point = '5.0 0.0 0.0'
+  #   variable = disp_x
+  # [../]
+  # [./disp_y1]
+  #   type = PointValue
+  #   point = '5.0 0.0 0.0'
+  #   variable = disp_y
+  # [../]
   [./stress_xx1]
     type = PointValue
-    point = '0.0 0.0 0.0'
+    point = '0.0 0.0 0.0' # '-5.0 -0.25 0.0'
     variable = stress_xx
   [../]
   [./stress_yy1]
     type = PointValue
-    point = '0.0 0.0 0.0'
+    point = '0.0 0.0 0.0' # '-5.0 -0.25 0.0
     variable = stress_yy
+  [../]
+  [./stress_xy1]
+    type = PointValue
+    point = '0.0 0.0 0.0' # '-5.0 -0.25 0.0
+    variable = stress_xy
   [../]
   # [./stress_xy1]
   #   type = PointValue
   #   point = '0.0 0.5 0.0'
   #   variable = stress_xy
   # [../]
-  [./moment_x_bot]
-    type = SidesetMoment
-    direction = '1 0 0'
-    stress_tensor = stress
-    boundary = 'left'
-    ref_point = '0.0 0.0 0.0'
-    leverarm_dir = 1
-  [../]
-  [./vmstress1]
-    type = MaxVonMises
-    variable_name = vmstress
-  [../]
-  [./vmstress2]
-    type = PointValue
-    point = '0.25 0.0 0.0'
-    variable = vmstress
-  [../]
+  # [./moment_x_bot]
+  #   type = SidesetMoment
+  #   direction = '1 0 0'
+  #   stress_tensor = stress
+  #   boundary = 'Left'
+  #   ref_point = '-5.0 -0.25 0.0'
+  #   leverarm_dir = 1
+  # [../]
+  # [./vmstress1]
+  #   type = MaxVonMises
+  #   variable_name = vmstress
+  # [../]
+  # [./vmstress2]
+  #   type = PointValue
+  #   point = '0.25 0.0 0.5'
+  #   variable = vmstress
+  # [../]
 []
 
 [Outputs]
-  file_base = 'beam_solid'
+  file_base = 'beam3dinc'
   exodus = true
   csv = true
 []

@@ -2,10 +2,13 @@
 [Mesh]
   [mesh_gen]
     type = GeneratedMeshGenerator
-    dim = 2
-    ny = 1 # 50
+    dim = 3
+    ny = 4 # 50
     ymin = 0.0
     ymax = 0.5
+    zmin = 0.0
+    zmax = 1.0
+    nz = 2
     nx = 100 # 100
     xmin = 0.0
     xmax = 10.0
@@ -14,10 +17,17 @@
   [nodeset_gen]
     type = ExtraNodesetGenerator
     new_boundary = 'corner_node'
-    coord = '10.0 0.0 0.0'
+    coord = '10.0 0.0 0.5'
     input = 'mesh_gen'
   [../]
-  displacements = 'disp_x disp_y'
+  [set_material_id0]
+    type = SubdomainBoundingBoxGenerator
+    input = nodeset_gen
+    bottom_left = '0.0 0.0 0.0'
+    top_right = '0.1 0.25 1.0'
+    block_id = 1
+  []
+  displacements = 'disp_x disp_y disp_z'
   second_order = true
 []
 
@@ -30,12 +40,21 @@
     order = SECOND # FIRST
     family = LAGRANGE
   [../]
+  [./disp_z]
+    order = SECOND # FIRST
+    family = LAGRANGE
+  [../]
 []
 
 [AuxVariables]
   [./stress_xx]
     order = FIRST # CONSTANT
     family = MONOMIAL
+  [../]
+  [./stress_xx1]
+    order = FIRST # CONSTANT
+    family = MONOMIAL
+    block = 1
   [../]
   [./stress_yy]
     order = FIRST # CONSTANT
@@ -53,7 +72,7 @@
 
 [Kernels]
   [./DynamicTensorMechanics]
-    displacements = 'disp_x disp_y'
+    displacements = 'disp_x disp_y disp_z'
   [../]
 []
 
@@ -64,6 +83,14 @@
     variable = stress_xx
     index_i = 0
     index_j = 0
+  [../]
+  [./stress_xx1]
+    type = RankTwoAux
+    rank_two_tensor = stress
+    variable = stress_xx1
+    index_i = 0
+    index_j = 0
+    block = 1
   [../]
   [./stress_yy]
     type = RankTwoAux
@@ -101,6 +128,12 @@
     boundary = left
     value = 0.0
   [../]
+  [./fixz1]
+    type = DirichletBC
+    variable = disp_z
+    boundary = left
+    value = 0.0
+  [../]
 []
 
 [NodalKernels]
@@ -120,7 +153,7 @@
   [../]
   [./strain]
     type = ComputeFiniteStrain
-    displacements = 'disp_x disp_y'
+    displacements = 'disp_x disp_y disp_z'
   [../]
   [./stress]
     type =  ComputeFiniteStrainElasticStress
@@ -157,23 +190,28 @@
 [Postprocessors]
   [./disp_x1]
     type = PointValue
-    point = '10.0 0.25 0.0'
+    point = '10.0 0.25 0.5'
     variable = disp_x
   [../]
   [./disp_y1]
     type = PointValue
-    point = '10.0 0.25 0.0'
+    point = '10.0 0.25 0.5'
     variable = disp_y
   [../]
   [./stress_xx1]
     type = PointValue
-    point = '0.0 0.0 0.0'
+    point = '0.0 0.0 0.5'
     variable = stress_xx
   [../]
   [./stress_yy1]
     type = PointValue
-    point = '0.0 0.0 0.0'
+    point = '0.0 0.0 0.5'
     variable = stress_yy
+  [../]
+  [./stress_xy1]
+    type = PointValue
+    point = '0.0 0.0 0.5'
+    variable = stress_xy
   [../]
   # [./stress_xy1]
   #   type = PointValue
@@ -185,22 +223,32 @@
     direction = '1 0 0'
     stress_tensor = stress
     boundary = 'left'
-    ref_point = '0.0 0.0 0.0'
+    ref_point = '0.0 0.0 0.5'
     leverarm_dir = 1
   [../]
-  [./vmstress1]
-    type = MaxVonMises
-    variable_name = vmstress
+  # [./vmstress1]
+  #   type = MaxVonMises
+  #   variable_name = vmstress
+  # [../]
+  # [./vmstress2]
+  #   type = PointValue
+  #   point = '0.25 0.0 0.5'
+  #   variable = vmstress
+  # [../]
+  [./AvgStress]
+    type = ElementAverageValue
+    variable = stress_xx1
+    block = 1
   [../]
-  [./vmstress2]
-    type = PointValue
-    point = '0.25 0.0 0.0'
-    variable = vmstress
-  [../]
+  # [./AvgStress]
+  #   type = AverageStress
+  #   variable_name = vmstress
+  #   block = 1
+  # [../]
 []
 
 [Outputs]
-  file_base = 'beam_solid'
+  file_base = 'beam3d'
   exodus = true
   csv = true
 []
