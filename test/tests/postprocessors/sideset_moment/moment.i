@@ -110,9 +110,9 @@
 []
 
 [Postprocessors]
-  [./moment_x_bot]
+  [./moment_z_bot]
     type = SidesetMoment
-    direction = '1 0 0'
+    stress_dir = 0
     stress_tensor = stress
     boundary = 'left'
     ref_point = '0.0 0.0 0.25'
