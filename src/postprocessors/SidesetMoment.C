@@ -26,8 +26,11 @@ SidesetMomentTempl<is_ad>::validParams()
   params.addCoupledVar("p", "The scalar pressure");
   params.addRequiredParam<RealVectorValue>(
       "ref_point", "Reference point on the sideset about which the moment is computed");
-  params.addRequiredRangeCheckedParam<unsigned int>(
-      "leverarm_direction", "leverarm_direction <= 2", "Lever arm direction");
+  params.addParam<bool>("use_radial", false, "Bool to indicate whether to use radial distance between current and reference points");
+  // params.addRangeCheckedParam<RealVectorValue>(
+  //     "leverarm_direction", 0, "leverarm_direction <= 2", "Lever arm direction");
+  params.addParam<RealVectorValue>(
+      "leverarm_direction", (1,0,0), "Lever arm direction");
   params.set<bool>("use_displaced_mesh") = true;
   return params;
 }
@@ -41,7 +44,8 @@ SidesetMomentTempl<is_ad>::SidesetMomentTempl(const InputParameters & parameters
     _stress_dir(isParamValid("stress_dir") ? &getParam<unsigned int>("stress_dir") : nullptr),
     _p(isCoupled("p") ? &coupledValue("p") : nullptr),
     _ref_point(getParam<RealVectorValue>("ref_point")),
-    _leverarm_direction(getParam<unsigned int>("leverarm_direction"))
+    _use_radial(getParam<bool>("use_radial")),
+    _leverarm_direction(isParamValid("use_radial") ? &getParam<RealVectorValue>("leverarm_direction") : nullptr)
 {
   if (_tensor && _p)
     mooseError(
@@ -57,6 +61,33 @@ SidesetMomentTempl<is_ad>::SidesetMomentTempl(const InputParameters & parameters
         "In block ", name(), ", either the stress tensor or the pressure should be provided.");
 }
 
+// template <bool is_ad>
+// Real
+// SidesetMomentTempl<is_ad>::computeQpIntegral()
+// {
+//   if (_tensor)
+//   {
+//     RealVectorValue dir(0, 0, 0);
+//     dir((*_stress_dir)) = 1;
+//     if (!_use_radial)
+//       return _normals[_qp] * (MetaPhysicL::raw_value((*_tensor)[_qp]) * dir) *
+//              std::abs(_ref_point((*_leverarm_direction)) - _q_point[_qp]((*_leverarm_direction)));
+//     else
+//       return _normals[_qp] * (MetaPhysicL::raw_value((*_tensor)[_qp]) * dir) *
+//              std::pow((std::pow(_ref_point(0) - _q_point[_qp](0),2) + std::pow(_ref_point(1) - _q_point[_qp](1),2)),0.5);
+//   }
+//   else
+//   {
+//     if (!_use_radial)
+//       return std::abs((*_p)[_qp]) * std::abs(_ref_point((*_leverarm_direction)) - _q_point[_qp]((*_leverarm_direction)));
+//     else
+//     {
+//       // std::cout << (*_p)[_qp] << " , " << std::pow((std::pow((_ref_point(0) - _q_point[_qp](0)),2) + std::pow((_ref_point(1) - _q_point[_qp](1)),2)),0.5) << std::endl;
+//       return std::abs((*_p)[_qp]) * std::pow((std::pow((_ref_point(0) - _q_point[_qp](0)),2) + std::pow((_ref_point(1) - _q_point[_qp](1)),2)),0.5);
+//     }
+//   }
+// }
+
 template <bool is_ad>
 Real
 SidesetMomentTempl<is_ad>::computeQpIntegral()
@@ -65,12 +96,27 @@ SidesetMomentTempl<is_ad>::computeQpIntegral()
   {
     RealVectorValue dir(0, 0, 0);
     dir((*_stress_dir)) = 1;
-    return _normals[_qp] * (MetaPhysicL::raw_value((*_tensor)[_qp]) * dir) *
-           std::abs(_ref_point(_leverarm_direction) - _q_point[_qp](_leverarm_direction));
+    RealVectorValue diff1 = _ref_point - _q_point[_qp];
+    if (!_use_radial)
+      // return _normals[_qp] * (MetaPhysicL::raw_value((*_tensor)[_qp]) * dir) *
+      //        std::abs(_ref_point((*_leverarm_direction)) - _q_point[_qp]((*_leverarm_direction)));
+      return _normals[_qp] * (MetaPhysicL::raw_value((*_tensor)[_qp]) * dir) * (diff1(0) * (*_leverarm_direction)(0) + diff1(1) * (*_leverarm_direction)(1) + diff1(2) * (*_leverarm_direction)(2));
+    else
+      return _normals[_qp] * (MetaPhysicL::raw_value((*_tensor)[_qp]) * dir) *
+             std::pow((std::pow(_ref_point(0) - _q_point[_qp](0),2) + std::pow(_ref_point(1) - _q_point[_qp](1),2)),0.5);
   }
   else
-    return (*_p)[_qp] *
-           std::abs(_ref_point(_leverarm_direction) - _q_point[_qp](_leverarm_direction));
+  {
+    RealVectorValue diff1 = _ref_point - _q_point[_qp];
+    if (!_use_radial)
+      // return std::abs((*_p)[_qp]) * std::abs(_ref_point((*_leverarm_direction)) - _q_point[_qp]((*_leverarm_direction)));
+      return ((*_p)[_qp]) * (diff1(0) * (*_leverarm_direction)(0) + diff1(1) * (*_leverarm_direction)(1) + diff1(2) * (*_leverarm_direction)(2));
+    else
+    {
+      // std::cout << (*_p)[_qp] << " , " << std::pow((std::pow((_ref_point(0) - _q_point[_qp](0)),2) + std::pow((_ref_point(1) - _q_point[_qp](1)),2)),0.5) << std::endl;
+      return std::abs((*_p)[_qp]) * std::pow((std::pow((_ref_point(0) - _q_point[_qp](0)),2) + std::pow((_ref_point(1) - _q_point[_qp](1)),2)),0.5);
+    }
+  }
 }
 
 template class SidesetMomentTempl<false>;

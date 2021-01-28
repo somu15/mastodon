@@ -41,8 +41,11 @@ private:
   /// the reference point on the sideset about which the moment is computed
   const RealVectorValue & _ref_point;
 
+  /// bool to use radial distance between the current point and the reference point
+  const bool & _use_radial;
+
   /// the direction along which the lever arm is computed
-  const unsigned int & _leverarm_direction;
+  const RealVectorValue * _leverarm_direction;; // const unsigned int * _leverarm_direction;
 };
 
 typedef SidesetMomentTempl<false> SidesetMoment;
