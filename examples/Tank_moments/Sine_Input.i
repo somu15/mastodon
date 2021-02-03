@@ -10,6 +10,13 @@
     paired_block = '1'
     new_boundary = 'Interface'
   [../]
+  [./new_block]
+    type = SubdomainBoundingBoxGenerator
+    input = interface1
+    block_id = '5'
+    bottom_left = '0.7979 0.0 0.0'
+    top_right = '-0.7979 0.0 0.3'
+  [../]
 []
 
 [GlobalParams]
@@ -336,7 +343,7 @@
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
   petsc_options_value = 'lu       superlu_dist'
   start_time = 0.0
-  end_time = 4.0
+  end_time = 0.01
   dt = 0.005
   dtmin = 0.00001
   nl_abs_tol = 1e-14
@@ -361,19 +368,38 @@
     point = '0.71 0.0 1.8079'
     variable = Wave1
   [../]
-  [./moment_wall]
+  [./moment_wall_y]
     type = SidesetMoment
     boundary = 'Fluid_Wall'
-    ref_point = '0.0 0.0 0.0079'
-    leverarm_direction = '0 0 1'
-    p = p
+    reference_point = '0.0 0.0 0.0079'
+    moment_direction = '0 1 0'
+    pressure = p
   [../]
-  [./moment_base]
+  [./moment_base_y]
     type = SidesetMoment
     boundary = 'Fluid_Bottom'
-    ref_point = '0.0 0.0 0.0079'
-    leverarm_direction = '1 0 0'
-    p = p
+    reference_point = '0.0 0.0 0.0079'
+    moment_direction = '0 1 0'
+    pressure = p
+  [../]
+  [./moment_wall_x]
+    type = SidesetMoment
+    boundary = 'Fluid_Wall'
+    reference_point = '0.0 0.0 0.0079'
+    moment_direction = '1 0 0'
+    pressure = p
+  [../]
+  [./moment_base_x]
+    type = SidesetMoment
+    boundary = 'Fluid_Bottom'
+    reference_point = '0.0 0.0 0.0079'
+    moment_direction = '1 0 0'
+    pressure = p
+  [../]
+  [./avg_stress]
+    type = ElementAverageValue
+    variable = stress_xx
+    block = 5
   [../]
 []
 
@@ -382,10 +408,10 @@
   exodus = true
   perf_graph = true
   print_linear_residuals = true
-  file_base = Ex_SC_Harmonic
+  file_base = Ex_SC_Harmonic1
   [./out]
     execute_on = 'TIMESTEP_BEGIN'
     type = CSV
-    file_base = SC_Harmonic
+    file_base = SC_Harmonic1
   [../]
 []
