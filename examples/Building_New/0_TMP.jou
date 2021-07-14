@@ -1,0 +1,326 @@
+reset
+# Created in Cubit Version 15.2
+####################################################################
+### Define Inputs:
+
+
+### Outer Structure ###
+#{structure_z_length = 32}
+#{structure_x_length = 90}
+#{structure_y_length = 60}
+#{wall_x = 40}
+#{buttress_w = 4}
+#{buttress_t = .75}
+#{slab_h = 8}
+#{roof_t = .75}
+#{wall_t = .75}
+#{basemat_thickness = 1}
+
+
+#### RV and SG
+#{RV_center = 1.8}
+#{RV_housing_D = 7.5}
+#{RV_housing_t = .5}
+#{SG_D = 3}
+#{SG_spacing = 10}
+#{SG_h = 14}
+#{SG_frame_h = 2}
+#{SG_base_x = 5}
+#{SG_base_y = 5}
+#{SG_base_z = 2}
+
+#{RV_D = 5}
+#{RV_h = 5}
+#{RV_t = 0.02}
+#{fluid_h = 4}
+#{sphere_r = 3.625}
+
+
+#{global_mesh_size = 2}
+#{num_wall_elems = 2}
+
+##########################################################################
+### Create Geometry:
+
+### Outer Structure
+brick x {structure_x_length+wall_t} y {structure_y_length+wall_t} z {structure_z_length}
+brick x {structure_x_length-wall_t} y {structure_y_length-wall_t} z {structure_z_length}
+subtract volume 2 from volume 1
+brick x {structure_x_length+wall_t} y {structure_y_length+wall_t} z {basemat_thickness}
+volume 3 move z {-basemat_thickness/2}
+volume 1 move z {structure_z_length/2}
+brick x {wall_t} y {structure_y_length-wall_t} z {structure_z_length}
+volume 4 move x {-structure_x_length/2+wall_x} z {structure_z_length/2}
+
+### Suspended slab
+brick x {wall_t} y {structure_y_length-wall_t} z {slab_h-wall_t/2}
+volume 5 move x {-structure_x_length/2+wall_x/4} z {slab_h/2-wall_t/4}
+volume 5 copy move x {wall_x/4} repeat 2
+brick x {wall_x-wall_t} y {wall_t} z {slab_h-wall_t/2}
+volume 8 move x {(-structure_x_length+wall_x)/2} y {structure_y_length/2-structure_y_length/6} z {slab_h/2-wall_t/4}
+volume 8 copy move y {-structure_y_length/6} repeat 4
+brick x {wall_x-wall_t} y {structure_y_length-wall_t} z {wall_t}
+volume 13 move x {(-structure_x_length+wall_x)/2} z {slab_h}
+
+### Buttresses
+brick x {buttress_w} y {buttress_t} z {structure_z_length}
+volume 14 move x {-(structure_x_length+buttress_w+wall_t)/2} y {structure_y_length/2-structure_y_length/6} z {structure_z_length/2}
+volume 14 copy move y {-structure_y_length/6} repeat 4
+volume 14 15 16 17 18 copy move x {structure_x_length+buttress_w+wall_t}
+brick x {buttress_t} y {buttress_w} z {structure_z_length}
+volume 24 move x {-structure_x_length/2+10} y {-(structure_y_length+buttress_w+wall_t)/2} z {structure_z_length/2}
+volume 24 copy move x {10} repeat 7
+delete volume 27
+volume 24 25 26 28 29 30 31 copy move y {structure_y_length+buttress_w+wall_t}
+volume 14 15 16 17 18 copy move x {wall_x+buttress_w+wall_t}
+brick x {structure_x_length-wall_t} y {buttress_t} z {buttress_w}
+volume 44 move y {20} z {structure_z_length-buttress_w/2}
+volume 44 copy move y -10 repeat 4
+brick x {buttress_t} y {structure_y_length-wall_t} z {buttress_w}
+volume 49 move x {-structure_x_length/2+10} z {structure_z_length-buttress_w/2}
+volume 49 copy move x 10 repeat 7
+delete volume 52
+
+### RV
+create cylinder height {slab_h-wall_t/2}  radius {RV_housing_D/2}
+create cylinder height {slab_h-wall_t/2}  radius {RV_housing_D/2-RV_housing_t}
+subtract volume 58 from 57
+volume 57 move x {-structure_x_length/2+30} z {slab_h/2-wall_t/4}
+create cylinder height {RV_h}  radius {RV_D/2}
+volume 59 move x {-structure_x_length/2+30} z {-RV_h/2+slab_h-wall_t/2}
+
+
+### Webcuts and merging
+webcut volume 1 3  with sheet extended from surface 16
+webcut volume 1 3  with sheet extended from surface 14
+webcut volume 1 3 64 60 61  with sheet extended from surface 13
+webcut volume 1 64 60 3 61  with sheet extended from surface 15
+
+webcut volume 62 48 47 46 45 44 63  with sheet extended from surface 148
+webcut volume 62 48 47 46 45 44 63  with sheet extended from surface 150
+webcut volume 82 83 84 85 86 87 88  with sheet extended from surface 154
+webcut volume 82 83 84 85 86 87 88  with sheet extended from surface 156
+webcut volume 96 97 98 99 100 101 102  with sheet extended from surface 160
+webcut volume 96 97 98 99 100 101 102  with sheet extended from surface 162
+webcut volume 110 111 112 113 114 115 116  with sheet extended from surface 28
+webcut volume 110 111 112 113 114 115 116  with sheet extended from surface 30
+webcut volume 124 125 126 127 128 129 130  with sheet extended from surface 172
+webcut volume 124 125 126 127 128 129 130  with sheet extended from surface 174
+webcut volume 138 139 140 141 142 143 144  with sheet extended from surface 178
+webcut volume 138 139 140 141 142 143 144  with sheet extended from surface 180
+webcut volume 152 153 154 155 156 157 158  with sheet extended from surface 184
+webcut volume 152 153 154 155 156 157 158  with sheet extended from surface 186
+webcut volume 166 167 168 169 170 171 172  with sheet extended from surface 190
+webcut volume 166 167 168 169 170 171 172  with sheet extended from surface 192
+webcut volume 132 133 134 135 136 with sheet extended from surface 264
+delete Volume 132 133 134 135 136
+webcut volume 1 49 50 51 4 53 54 55 56 60  with sheet extended from surface 111
+webcut volume 1 49 50 51 4 53 54 55 56 60  with sheet extended from surface 113
+webcut volume 202 203 204 205 206 207 208 209 210 211  with sheet extended from surface 105
+webcut volume 202 203 204 205 206 207 208 209 210 211  with sheet extended from surface 107
+webcut volume 222 223 224 225 226 227 228 229 230 231  with sheet extended from surface 99
+webcut volume 222 223 224 225 226 227 228 229 230 231  with sheet extended from surface 101
+webcut volume 242 243 244 245 246 247 248 249 250 251  with sheet extended from surface 93
+webcut volume 242 243 244 245 246 247 248 249 250 251  with sheet extended from surface 95
+webcut volume 262 263 264 265 266 267 268 269 270 271  with sheet extended from surface 87
+webcut volume 262 263 264 265 266 267 268 269 270 271  with sheet extended from surface 89
+webcut volume 12 11 10 9 8 13 66 3 73  with sheet extended from surface 34
+webcut volume 12 11 10 9 8 13 66 3 73  with sheet extended from surface 36
+webcut volume 301 302 303 304 305 59 307 306 308 309  with sheet extended from surface 40
+webcut volume 301 302 303 304 305 59 307 306 308 309  with sheet extended from surface 42
+webcut volume 319 320 321 322 323 325 324 326 327  with sheet extended from surface 46
+webcut volume 319 320 321 322 323 325 324 326 327  with sheet extended from surface 48
+webcut volume 343 344 345  with sheet extended from surface 84
+webcut volume 347 346 348  with sheet extended from surface 1716
+webcut volume 299 297 5 6 333 7 342 325 306 316 13 317 3 308 335 326 344 64 347  with sheet extended from surface 2676
+webcut volume 299 297 5 6 333 7 342 325 306 316 13 317 3 308 335 326 344 64 347  with sheet extended from surface 2674
+webcut volume 388 373 382 374 385 376 387 377 379 375 372 381 380 378 383 371 384 386 389  with sheet extended from surface 2686
+webcut volume 388 373 382 374 385 376 387 377 379 375 372 381 380 378 383 371 384 386 389  with sheet extended from surface 2684
+webcut volume 409 424 419 410 411 412 421 418 413 414 416 415 420 417 422 423 425 426 427  with sheet extended from surface 2696
+webcut volume 409 424 419 410 411 412 421 418 413 414 416 415 420 417 422 423 425 426 427  with sheet extended from surface 2694
+webcut volume 447 448 449 450 451 453 452 454 455 456 457 458 465 459 460 461 462 463 464  with sheet extended from surface 2706
+webcut volume 447 448 449 450 451 453 452 454 455 456 457 458 465 459 460 461 462 463 464  with sheet extended from surface 2704
+webcut volume 485 486 487 488 489 491 490 492 493 494 495 496 497 500 499 498 501 502 503  with sheet extended from surface 2716
+webcut volume 485 486 487 488 489 491 490 492 493 494 495 496 497 500 499 498 501 502 503  with sheet extended from surface 2714
+webcut volume 70 103 109 256 211 212 206 252 216 246 266 251 179 165 130 159 24 282 96 124 28 31 26 95 242 226 72 15 16 19 20 21 4 38 29 30 25 1 33 23 34 60 22 14 18 17 43 41 113 138 39 40 131 114 112 42 65 63 62 115 137 82 116 81 271 68 144 75 272 222 232 281 32 123 152 231 236 262 241 286 261 221 192 172 173 186 180 276 110 111 102 88 291 202 201 196 89 151 145 158 166 35 37 117 36 with sheet extended from surface 525
+webcut volume 475 437 330 339 439 436 473 435 438 476 418 481 416 442 474 413 445 415 477 484 with sheet extended from surface 343
+webcut volume 650 654 651 653 648 652 649 655 646 658 647 657 656 661 660 659 with sheet extended from surface 349
+webcut volume 662 669 668 667 666 665 664 663 with sheet extended from surface 352
+delete volume 642 644 643 645 414 321
+webcut volume 549 614 588 587 591 589 586 592 570 569 567 566 565 564 542 640 633 632 630 610 601 600 599 597 596 595 594 608 543 607 606 574 550 578 585 582 580 579 560 559 558 544 545 547 548 620 611 551 552 628 627 626 625 617 615 605 590 557 556 555 554 553 626 575 573 572 571 568 604 603 602 600 563 583 562 593 584 546 629 581 576 577 634 631 635 641 639 638 637 636 624 623 622 621 618 619 616 613 612 609 561 598  with sheet extended from surface 3726
+webcut volume 549 614 588 587 591 589 586 592 570 569 567 566 565 564 542 640 633 632 630 610 601 600 599 597 596 595 594 608 543 607 606 574 550 578 585 582 580 579 560 559 558 544 545 547 548 620 611 551 552 628 627 626 625 617 615 605 590 557 556 555 554 553 626 575 573 572 571 568 604 603 602 600 563 583 562 593 584 546 629 581 576 577 634 631 635 641 639 638 637 636 624 623 622 621 618 619 616 613 612 609 561 598  with sheet extended from surface 4866
+
+### Steam Generators
+brick x {SG_base_x} y {SG_base_y} z {SG_base_z}
+volume 886 move y {-1.5*SG_spacing} z {SG_base_z/2}
+volume 886 copy move y {SG_spacing} repeat 3
+create cylinder height {SG_h}  radius {SG_D/2}
+volume 890 move y {-1.5*SG_spacing} z {SG_h/2+SG_base_z}
+volume 890 copy move y {SG_spacing} repeat 3
+webcut volume 886 349  with sheet extended from surface 8631
+webcut volume 349 887  with sheet extended from surface 8634
+webcut volume 888 349  with sheet extended from surface 8637
+webcut volume 889 349  with sheet extended from surface 8640
+
+# Roof slab
+brick x {structure_x_length+wall_t} y {structure_y_length+wall_t} z {roof_t}
+volume 902 move z {structure_z_length+wall_t/2}
+imprint all
+merge all
+
+#########################################
+
+### Meshing
+curve 761 729 290 217 205 193 181 169 843 732 388 400 412 50 424 436 448 460 698 873 231 243 255 267 279 811 694 374 362 350 338 52 314 302 int {num_wall_elems}
+curve 12709 int {num_wall_elems}
+volume all size {global_mesh_size}
+
+#walls/Buttresses
+mesh volume 269 268 270 271 251 250 200 249 248 201 231 230 229 228 227 226 252 221 84 105 83 16 72 82 47 48 274 275 276 277 283 278 279 280 140 152 138 147 139 284 285 286 281 287 288 158 157 156 155 150 151 262 263 264 265 266 267 102 100 101 199 198 197 196 195 234 194 193 179 178 177 123 122 79 117 80 81 76 77 34 33 32 78 124 290 272 291 289 255 181 113 112 182 111 109 110 108 107 85 106 56 55 114 161 159 232 165 187 164 162 235 192 163 68 75 172 41 42 63 223 213 214 88 87 131 49 20 137 215 225 253 256 258 260 211 257 210 259 208 254 209 261 148 153 144 143 154 142 146 141 145 149 207 205 206 202 203 204 23 97 26 99 98 96 28 17 92 86 1 15 14 35 36 37 24 46 45 44 103 70 104 40 4 62 166 90 93 91 94 18 51 25 31 43 54 118 50 53 29 242 38 119 121 120 39 19 241 245 30 240 60 176 189 233 175 174 188 173 247 160 191 246 190 21 22 186 185 180 184 115 183 116 212 224 222 216 217 218 219 220 167 95 171 170 169 168 89 65 238 126 239 127 125 128 129 244 130 236 243 237 273 282
+mesh volume 613 612 605 607 608 611 606 610 609 546 632 631 630 629 628 627 625 626 624 566 549 547 565 552 554 555 556 557 558 559 604 603 602 601 594 600 599 598 597 596 595 553 582 581 580 573 579 578 577 576 575 574 593 584 591 590 589 585 588 587 586 548 583 570 568 567 569 640 641 639 638 637 636 635 634 633 544 545 543 542 560 561 551 562 563 564 592 572 571 550 623 622 621 620 619 618 617 615 616 614
+mesh volume 507 855 854 853 852 851 844 850 845 849 848 847 846 292 762 7 11 773 491 490 355 403 342 796 536 537 538 332 333 328 341 340 338 337 293 401 71 819 818 817 816 808 809 815 814 813 812 811 885 884 883 879 882 881 880 790 792 472 325 777 359 362 357 360 856 442 492 441 440 316 314 300 302 312 297 303 787 310 779 778 774 776 717 494 433 495 488 431 487 689 532 800 694 692 786 794 799 793 772 871 869 768 767 766 765 764 481 480 479 519 518 517  703 803 702 802 701 801 700 699 798 698 797 697 795 696 695 727 354 752 319 322 320 323 868 867 866 865 864 863 860 861 862 859 858 857 395 393 391 499 498 500 526 528 746 747 745 744 740 741 742 743 739 843 842 841 840 839 838 837 836 831 832 833 834 835 380 453 381 379 376 450 377 378 775 805 806 807   686     469 13 12 6 8 10 9 313 728 301 398 5 296 295 304 294 311 306 375 410 452 374 720 719 726 718 725 724 723 305 830 821 824 829 828 823 827 822 826 820 825 788 789 449 421 417 420 454 419 416 418 513 509   791  329 331 461 460 459 457 456  756 754 761 753 755 759 757 758 878 877 870 876 872 873 875 874 687 738 737 730 736 735 734 733 729 732 731  412 373 372 781 780 783 810 785 782 784 716 715 714 804 713 711 710 709 708 707 706 704 763 760 749 750 751 748 770 769 771 721 722 705 688 712 691 693 690
+
+# RV citadel and lower floor stuff
+curve 10108 10089 10122 10139  int 10
+mesh volume 648 649 650 651 654 655 652 653
+mesh Volume 666 668 662 664 663 665 667 669
+mesh volume 682 680 678 684 679 685 683 681
+mesh Volume 929 933 931 927
+mesh Volume 930 928 932 934
+mesh Volume 422
+mesh Volume 435 473 476 438
+mesh volume 330 475 339 437
+volume 57 scheme Sweep source surface 8714 6197 8711 6167 8712 6187 8713 6177 target surface 349 sweep transform least squares
+volume 57 autosmooth target on fixed imprints off smart smooth off
+mesh volume 57
+
+# lower slab
+mesh volume 358 356 397 399 361 402 353 400 430 434 471 468 506 510 525 529 530 533 514 511
+
+#SGs
+volume 893 892 891 890 size {global_mesh_size}
+volume 889 888 887 886 size {global_mesh_size/5}
+curve 13900 13897 13899 13898 13912 13911 13909 13910 13924 13921 13923 13922 13936 13935 13933 13934 int 4
+surface 8644 8662 8668 8680  Scheme hole rad_intervals 2
+mesh surface 8644 8662 8668 8680
+volume 889 888 887 886 redistribute nodes on
+volume 889 888 887 886 Scheme Sweep Vector 0 0 -1
+mesh volume 889 888 887 886 893 892 891 890
+
+
+# Roof
+surface 8897 8895 8893 8891 8889 8887 8885 8883 8884 8861 8863 8865 8867 8869 8871 8873 8875 8876 8855 8854 8852 8850 8848 8846 8844 8842 8840 8819 8821 8823 8825 8827 8829 8831 8833 8834 8813 8812 8810 8808 8806 8804 8802 8800 8798 8781 8782 8784 8786 8788 8790 8792 8794 8796  Scheme Auto
+mesh surface 8897 8895 8893 8891 8889 8887 8885 8883 8884 8861 8863 8865 8867 8869 8871 8873 8875 8876 8855 8854 8852 8850 8848 8846 8844 8842 8840 8819 8821 8823 8825 8827 8829 8831 8833 8834 8813 8812 8810 8808 8806 8804 8802 8800 8798 8781 8782 8784 8786 8788 8790 8792 8794 8796
+volume 902  redistribute nodes on
+volume 902  Scheme Sweep Vector 0 0 1
+mesh volume 902
+
+# Basemat
+surface 8741 Scheme pave
+mesh surface 8741
+mesh surface 3436 3416 3386 3276 3806 3676 3696 3716 6209 6219 4076 4046 4426 4456 6308 6351 6516 6474 6454 6526 6506 4389 6495 6484 6464 4906 4876 4836 4806 4996 5026 5066 5096
+volume 350 61 351 349 redistribute nodes on
+volume 350 61 351 349 Scheme Sweep Vector 0 0 -1
+mesh volume 474 404 405 406 363 896 899 388 427 426 382 409 348 534 673 674 658 389 489 486 424 350 383 425 661 656 66 67 443 512 676 352 345 344 343 482 539 540 349 384 387 660 464 458 463 462 520 516 503 415 502 493 496 497 501 541 647 3 659 671 672 670 407 408 370 369 455 447 451 901 657 386 385 318 346 484 675 432 504 445 317 74 428 505 429 478 466 527 535 467 531 524 465 523 446 477 470 448 521 436 444 309 508 522 307 439 515 315 61 411 351 423 413 485 73 299 390 483 396 394 392 371 69 895 646 677 298 71 327 324 326 64 366 368 367 365 364 334 336 347 335 300 308
+
+#######################################
+# Remove old RV and add more detailed RV
+delete volume 59
+
+create cylinder radius {RV_D/2} height {RV_h}
+volume 903 move z {RV_h/2}
+
+create cylinder radius {RV_D/2-RV_t} height {RV_h-RV_t}
+volume 904 move z {RV_h/2-RV_t}
+subtract volume 904 from volume 903
+create cylinder radius  {RV_D/2-RV_t} height {fluid_h}
+volume 905 move z {fluid_h/2}
+webcut volume 903  with sheet extended from surface 9041
+webcut volume 903  with sheet extended from surface 9043
+
+create sphere radius {sphere_r} inner radius {sphere_r - RV_t} znegative
+create sphere radius {sphere_r - RV_t} znegative
+webcut volume 908 909 with general plane zplane offset {-sphere_r + 1}
+delete volume 908 909
+volume 910 911 move z {sphere_r - 1}
+
+create cylinder height 10 radius 1.5
+webcut volume 910 911 905 with sheet extended from surface 9068
+delete volume 912
+webcut volume 905 906 914 913 910 911 903 915 907 with plane xplane
+webcut volume 903 922 with sheet extended from surface 9106
+volume 911 922 924 923 918 915 913 907 920 905 903 925 919 917 906 916 926 921 910 914 move x {-structure_x_length/2+30} z {2.655}
+delete volume 903 906 917 922
+webcut volume 680 681 682 679 678 685 684 683 with sheet extended from surface 9188 9196
+merge all
+
+unmerge volume 652 667
+unmerge volume 648 666
+unmerge volume 653 665
+unmerge volume 651 664
+unmerge volume 654 663
+unmerge volume 650 662
+unmerge volume 655 669
+unmerge volume 649 668
+
+volume 668 667 929 666 664 665 934 933 932 928 422 927 930 931 662 669 663 916 923 915 905 926 682 683 684 925 678 685 680 679 681 924 921 918 914 907 911 920 919 913 910 move z {isolator_len}
+
+create Cylinder height 0.75 radius 3.25
+volume 935 move x -15.0 y 0.0 z 8.0
+create Cylinder height 0.75 radius 2.75
+volume 936 move x -15.0 y 0.0 z 8.0
+subtract volume 936 from volume 935
+# merge volume 935 with volume 669 668 667 666 665 664 663 662
+# webcut volume 903  with sheet extended from surface 6557 6567 6577 6587 6597 6527 6537 6547
+webcut volume 935 with sheet extended from surface 6428
+webcut volume 937 with sheet extended from surface 6430
+webcut volume 937 with sheet extended from surface 6440
+webcut volume 935 with sheet extended from surface 6378
+webcut volume 935 with sheet extended from surface 6400
+webcut volume 935 with sheet extended from surface 6398
+
+merge volume 648 with volume 943
+merge volume 653 with volume 935
+merge volume 651 with volume 942
+merge volume 654 with volume 941
+merge volume 650 with volume 939
+merge volume 655 with volume 937
+merge volume 649 with volume 938
+merge volume 652 with volume 940
+
+create vertex -17.85 0 8.675 on surface 6561
+create vertex -15 -2.85 8.675 on surface 6541
+create vertex -12.15 0 8.675 on surface 6599
+create vertex -15 2.85 8.675 on surface 6579
+imprint volume 669 with vertex 7916
+imprint volume 663 with vertex 7917
+imprint volume 665 with vertex 7918
+imprint volume 667 with vertex 7915
+delete vertex 7916
+delete vertex 7915
+delete vertex 7917
+delete vertex 7918
+create curve vertex 7921 7922
+create curve vertex 7922 7919
+create curve vertex 7919 7920
+create curve vertex 7928 7923
+merge all
+
+create vertex -12.15 0 8.375 on surface 9326
+create vertex -15 -2.85 8.375 on surface 9313
+create vertex -17.85 0 8.375 on surface 9324
+create vertex -15 2.85 8.375 on surface 9349
+imprint volume 941 with vertex 7931
+imprint volume 935 with vertex 7934
+imprint volume 940 with vertex 7933
+imprint volume 937 with vertex 7932
+delete vertex 7931
+delete vertex 7932
+delete vertex 7933
+delete vertex 7934
+
+create curve vertex 7919 7938
+create curve vertex 7920 7935
+create curve vertex 7921 7936
+create curve vertex 7922 7937
+merge all

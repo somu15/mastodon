@@ -43,6 +43,8 @@ private:
   /// the direction about which the moment is computed
   const RealVectorValue * _moment_direction;
 
+  // unsigned int _option;
+
   /// storage for the force vector
   RealVectorValue _force_vector;
 

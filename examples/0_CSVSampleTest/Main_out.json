@@ -1,0 +1,10 @@
+{
+    "app_name": "main",
+    "current_time": "Mon Mar  1 14:43:40 2021",
+    "executable": "/Users/dhulls/projects/mastodon/mastodon-opt",
+    "executable_time": "Mon Mar  1 11:33:07 2021",
+    "libmesh_version": "",
+    "moose_version": "git commit 17280049f7 on 2021-02-25",
+    "petsc_version": "3.14.2",
+    "slepc_version": "3.14.0"
+}

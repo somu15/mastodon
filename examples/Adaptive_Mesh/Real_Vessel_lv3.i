@@ -144,8 +144,8 @@
 []
 
 [Adaptivity]
-  marker = marker1
-  initial_steps = 2
+  initial_marker = marker1
+  initial_steps = 1
   [Markers]
     [marker1]
       type = UniformMarker
@@ -478,7 +478,7 @@
     f2 = 5.0
     f3 = 45.0
     f4 = 50.0
-    ts = 1.5
+    ts = 0.5
     scale_factor = 4.905
   []
 []
@@ -551,7 +551,7 @@
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
   petsc_options_value = 'lu       superlu_dist'
   start_time = 0.0
-  end_time = 0.001 # 3.0
+  end_time = 1.0 # 3.0
   dt = 0.001
   dtmin = 0.00001
   nl_abs_tol = 1e-12
@@ -969,10 +969,10 @@
   exodus = true
   perf_graph = true
   print_linear_residuals = true
-  file_base = Ex_RealVessel_lv3
+  file_base = Ex_RealVessel_lv2_2
   [./out]
     execute_on = 'TIMESTEP_BEGIN'
     type = CSV
-    file_base = RealVessel_lv3
+    file_base = RealVessel_lv2_2
   [../]
 []

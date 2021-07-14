@@ -6,7 +6,7 @@
   [./interface1]
     type = SideSetsBetweenSubdomainsGenerator
     input = file
-    primary_block = '1 99 98 97 96 95 93 92 91'
+    primary_block = '1'# 99 98 97 96 95 93 92 91'
     paired_block = '2'
     new_boundary = 'Interface'
   [../]
@@ -933,7 +933,7 @@
   exodus = true
   perf_graph = true
   print_linear_residuals = true
-  file_base = Ex_RealVessel_lv2
+  file_base = Ex_RealVessel_lv2_2
   [./out]
     execute_on = 'TIMESTEP_BEGIN'
     type = CSV

@@ -11,7 +11,7 @@
   [Markers]
     [marker]
       type = MinimumElementSizeMarker
-      element_size = 0.05
+      element_size = 0.0001 # 0.05
     []
   []
 []

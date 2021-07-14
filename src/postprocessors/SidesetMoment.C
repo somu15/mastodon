@@ -27,6 +27,7 @@ SidesetMomentTempl<is_ad>::validParams()
   params.addRequiredParam<RealVectorValue>(
       "reference_point", "Reference point on the sideset about which the moment is computed");
   params.addRequiredParam<RealVectorValue>("moment_direction", "Moment direction");
+  // params.addRequiredParam<unsigned int>("option", "option");
   params.set<bool>("use_displaced_mesh") = true;
   return params;
 }
@@ -43,6 +44,7 @@ SidesetMomentTempl<is_ad>::SidesetMomentTempl(const InputParameters & parameters
     _pressure(isCoupled("pressure") ? &coupledValue("pressure") : nullptr),
     _reference_point(getParam<RealVectorValue>("reference_point")),
     _moment_direction(&getParam<RealVectorValue>("moment_direction"))
+    // _option(getParam<unsigned int>("option"))
 {
   if (_tensor && _pressure)
     mooseError(
@@ -77,6 +79,12 @@ SidesetMomentTempl<is_ad>::computeQpIntegral()
                        _force_vector(1) * (_q_point[_qp] - _reference_point)(0));
 
   return _moment_vector * (*_moment_direction);
+  // return (_force_vector(0) * (_q_point[_qp] - _reference_point)(2));
+
+  // if (_option == 0)
+  //   return _force_vector * (*_moment_direction); // (((*_pressure)[_qp]) * (_q_point[_qp] - _reference_point)(2));
+  // else
+  //   return (((*_pressure)[_qp]) * (_q_point[_qp] - _reference_point)(0));
 }
 
 template class SidesetMomentTempl<false>;

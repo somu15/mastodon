@@ -4,6 +4,7 @@
 // libMesh includes
 #include "libmesh/error_vector.h"
 
+defineLegacyParams(MinimumElementSizeMarker);
 registerMooseObject("MastodonApp", MinimumElementSizeMarker);
 
 InputParameters
@@ -44,12 +45,35 @@ MinimumElementSizeMarker::MinimumElementSizeMarker(const InputParameters & param
 Marker::MarkerValue
 MinimumElementSizeMarker::computeElementMarker()
 {
+  // std::cout << "here 1" << std::endl;
   if (_error_vector)
     _minimum_element_size = _scale * (*_error_vector)[_current_elem->id()] + _factor;
   else
     _minimum_element_size = (*_element_size);
 
+  // std::cout << "here 2" << std::endl;
+
   if (_minimum_element_size < _current_elem->hmin())
     return REFINE;
   return DO_NOTHING;
 }
+
+
+
+// #include "IndicatorMarker.h"
+//
+// defineLegacyParams(IndicatorMarker);
+//
+// InputParameters
+// IndicatorMarker::validParams()
+// {
+//   InputParameters params = Marker::validParams();
+//   params.addRequiredParam<IndicatorName>("indicator",
+//                                          "The name of the Indicator that this Marker uses.");
+//   return params;
+// }
+//
+// IndicatorMarker::IndicatorMarker(const InputParameters & parameters)
+//   : Marker(parameters), _error_vector(getErrorVector(parameters.get<IndicatorName>("indicator")))
+// {
+// }

@@ -38,7 +38,7 @@
 []
 
 [Adaptivity]
-  marker = combo
+  marker = marker2 # combo
   initial_steps = 5
   [Indicators]
     [shear_wave]
@@ -57,11 +57,11 @@
       indicator = shear_wave
       block = 2
     []
-    [combo]
-      type = ComboMarker
-      markers = 'marker1 marker2'
-      block = '1 2'
-    []
+    # [combo]
+    #   type = ComboMarker
+    #   markers = 'marker1 marker2'
+    #   block = '1 2'
+    # []
   []
 []
 
